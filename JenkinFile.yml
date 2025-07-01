@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'us-east-1'
+        AWS_ACCOUNT_ID = credentials('aws-account-id')
+        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        ECR_REPOSITORY = 'task-api-repo'
+        DOCKER_IMAGE = "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest"
+        DB_USERNAME = credentials('db-username')
+        DB_PASSWORD = credentials('db-password')
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm install'
+                sh 'npm test'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t ${DOCKER_IMAGE} .'
+            }
+        }
+        stage('Push to ECR') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                    sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
+                    sh 'docker push ${DOCKER_IMAGE}'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                dir('terraform') {
+                    withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                        sh 'terraform init'
+                        sh 'terraform apply -auto-approve -var="db_username=${DB_USERNAME}" -var="db_password=${DB_PASSWORD}"'
+                    }
+                }
+            }
+            post {
+                failure {
+                    dir('terraform') {
+                        withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                            sh 'terraform apply -auto-approve -var="db_username=${DB_USERNAME}" -var="db_password=${DB_PASSWORD}"'
+                        }
+                    }
+                    error 'Deployment failed, rollback attempted'
+                }
+            }
+        }
+    }
+}

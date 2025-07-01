@@ -1,10 +1,29 @@
-variable "aws_region" { default = "us-east-1" }
-variable "project" { default = "nodeapi" }
-
-variable "vpc_cidr" { default = "10.0.0.0/16" }
-variable "public_subnet_cidrs" {
-  default = ["10.0.1.0/24", "10.0.2.0/24"]
+variable "region" {
+  default = "us-east-1"
 }
-variable "azs" {
-  default = ["us-east-1a", "us-east-1b"]
+
+variable "project_name" {
+  default = "task-api"
+}
+
+variable "db_username" {
+  sensitive = true
+}
+
+variable "db_password" {
+  sensitive = true
+}
+
+variable "db_name" {
+  default = "tasks_db"
+}
+
+variable "allowed_ssh_cidr" {
+  default = "0.0.0.0/0" # Replace with your IP for security
+}
+
+
+#cloud Watch
+variable "alert_email" {
+  default = "dahakedarshan99@gmail.com"
 }
