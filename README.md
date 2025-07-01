@@ -148,14 +148,6 @@ Add express-prometheus-middleware to index.js.
 Deploy Prometheus and Grafana using Docker Compose or AWS Managed Grafana.
 Create dashboards for CPU, memory, and request rates.
 
-
-
-6. Logging
-
-Logs are structured in JSON format using Winston (index.js).
-Configure CloudWatch agent on EC2 to ship logs to CloudWatch Logs.
-Optional: Deploy ELK Stack (Elasticsearch, Logstash, Kibana) and use Fluent Bit to ship logs.
-
 Accessing the API
 
 Local: http://localhost:3000/health, http://localhost:3000/tasks
