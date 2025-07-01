@@ -43,13 +43,13 @@ pipeline {
                     }
                 }
             }
-            post {
-                failure {
-                    dir('terraform') {
-                        withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
-                            sh 'terraform apply -auto-approve -var="db_username=${DB_USERNAME}" -var="db_password=${DB_PASSWORD}"'
-                        }
-                    }
+        }
+    }
+    post {
+        failure {
+            dir('terraform') {
+                withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                    sh 'terraform apply -auto-approve -var="db_username=${DB_USERNAME}" -var="db_password=${DB_PASSWORD}"'
                     error 'Deployment failed, rollback attempted'
                 }
             }
