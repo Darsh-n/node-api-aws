@@ -21,20 +21,6 @@ AWS CLI configured with access keys
 Jenkins server with Docker and AWS CLI installed
 AWS account with permissions for VPC, EC2, ALB, RDS, ECR, and CloudWatch
 
-Directory Structure
-task-api/
-├── Jenkinsfile                      # Jenkins pipeline
-├── terraform/                      # Terraform configurations
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── cloudwatch.tf
-├── Dockerfile                      # Docker configuration
-├── docker-compose.yml              # Local multi-container setup
-├── index.js                        # Node.js API code
-├── index.test.js                   # Jest unit tests
-├── package.json                    # Node.js dependencies
-├── .env                            # Environment variables
-├── README.md                       # This file
 
 Setup Instructions
 1. Local Development
